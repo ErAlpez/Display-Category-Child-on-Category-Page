@@ -1,0 +1,96 @@
+<?php
+/**
+ * The template for displaying Category pages
+ *
+ * @link https://codex.wordpress.org/Template_Hierarchy
+ *
+ * @package WordPress
+ * @subpackage ri-fusion
+ * @since Ri Fusion 1.0
+ */
+
+get_header();
+?>
+
+<div id="primary" class="content-area">
+    <div class="container">
+        <div id="bg-white">
+        <div class="row">
+            <div class="col-md-8">
+                <div id="left-content">
+                    <h1 class="archive-title"><?php printf( __( 'Category: %s', 'OnlinEarn' ), single_cat_title( '', false ) ); ?></h1>
+        
+                    <?php if (is_category( )) {
+                        $args = array('child_of' => $cat, 'hide_empty'=>0,'orderby'=>'ID');
+                        $categories = get_categories( $args );
+                        $thiscat = get_category( get_query_var( 'cat' ) );
+                        $catid = $thiscat->cat_ID;
+                        //create array from get_category_parents
+                        $parent_list = (explode (',',get_category_parents($catid,false,',')));
+                        $parent_name = ($parent_list[0]);
+                        $parent = get_cat_ID( $parent_name );
+
+                        $catlist = get_categories(
+                            array(
+                            'child_of' => $parent,
+                            'orderby' => 'id',
+                            'order' => 'DESC',
+                            'exclude' => $catid,
+                            'hide_empty' => '0'
+                            ) );
+                            //check if current category is parent category
+                            if ( $catid == $parent ) {           
+
+                                foreach($categories as $category) : { ?>
+                                    <ul class="list-child-cat">
+                                        <li>
+                                        <div class="cat_img pagecat">
+                                            <a href="<?php echo get_category_link($category->term_id); ?>">
+                                                <img src="<?php echo z_taxonomy_image_url($category->term_id, array(234, 188)); ?>" />
+                                            </a>
+                                        </div>
+                                        <div class="cat_name">
+                                            <h4><a href="<?php echo get_category_link($category->term_id); ?>">
+                                                <?php echo $category->name; ?>
+                                            </a></h4>
+                                        </div>
+                                        </li>
+                                        <div class="cat_description">
+                                            <p>
+                                                <?php echo $category->description; ?>
+                                            
+                                        </p></div>
+                                    </ul>   
+                                        
+                                                    
+                                <?php } endforeach;
+
+                            }
+                            else {
+                                if(have_posts()) : while(have_posts()) : the_post();
+                                echo '<ul class="list-child-cat_posts">';
+                                    echo '<li>';
+                                        echo '<div class="thump">'. the_post_thumbnail( array(700,354) ) .'</div>';
+                                        echo '<div class="clear"></div>';
+                                        echo '<div class="right-thump">';
+                                            echo '<h3>';
+                                                echo '<a href="'. get_permalink() .'">' . the_title() .'</a>';
+                                            echo '</h3>';
+                                        echo '</div>';
+                                        the_excerpt();
+                                    echo '</li>';
+                                echo '</ul>';
+                                endwhile; endif;
+                            }
+                    } ?>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <?php get_sidebar(); ?>
+            </div>
+          </div>
+        </div>
+    </div>
+</div><!-- #primary -->
+
+<?php get_footer(); ?>
